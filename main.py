@@ -4,10 +4,20 @@ from gtts import gTTS
 
 # función para obtener el texto del artículo
 def obtener_texto(url):
-    articulo = Article(url)
-    articulo.download()
-    articulo.parse()
-    return articulo.text
+    try:
+        articulo = Article(url)
+        articulo.download()
+        articulo.parse()
+
+        if not articulo.text.strip():
+            raise ValueError("No se pudo extraer texto del artículo")
+
+        return articulo.text
+
+    except Exception as e:
+        print("Error al obtener el artículo")
+        print(e)
+        return None
 
 # función para convertir texto a voz
 def texto_a_voz(texto, nombre_archivo="articulo.mp3"):
@@ -19,6 +29,9 @@ def texto_a_voz(texto, nombre_archivo="articulo.mp3"):
 def main():
     url = input("Ingresá la URL del artículo: ")
     texto = obtener_texto(url)
+    if texto is None:
+        print("No se pudo continuar con la conversión.")
+        return
 
     print("\n--- TEXTO DEL ARTÍCULO ---\n")
     print(f"{texto[:500]}...")  # mostramos solo una parte
